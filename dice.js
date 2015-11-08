@@ -33,12 +33,18 @@ var Die = function(diceArea, dieIdNum) {
 Die.cubeFaces = [ [0, 0, 0], [90, 0, 0], [0, -90, 0], [0, 90, 0], [270, 0, 0], [180, 0, 0] ]; // One rotation for each possible face to be shown.
 
 Die.prototype.roll = function() {
-	var randInt = Math.floor( Math.random() * 6 ); // 0 <= randInt <= 5.
+	var randInt = Math.floor( Math.random() * 6 ); //0 <= randInt <= 5.
 	var angles = Die.cubeFaces[randInt];
 	
 	for (var i = 0; i<3; i++) {
 		angles[i] += 360 * (Math.floor( Math.random()*3) - 1);
 	}
+	
+	if(angles[0] == 0 && angles[1] == 0 && angles[2] == 0) {//Always spin
+		angles[0] =  360;
+		angles[2] = -360;
+	}
+
 	this.rotateTo(angles);
 	this.value = randInt + 1;
 	return (randInt + 1);
@@ -51,17 +57,29 @@ Die.prototype.show = function(n) { this.rotateTo(Die.cubeFaces[n-1]);};
 
 
 var DiceArea = function(diceAreaDiv, areaName) {
+	DiceArea.Areas = DiceArea.Areas || {};
+	DiceArea.Areas[areaName] = this;
 	this.dice = new Array();
 	this.name = areaName;
 	this.diceAreaDiv = diceAreaDiv;
-	this.diceHolderDiv = diceAreaDiv.getElementsByClassName("diceHolder")[0];
+	//Try and find a diceHolder
+	var diceHolderarr = diceAreaDiv.getElementsByClassName("diceHolder");
+	if(diceHolderarr.length >0 && diceHolderarr[0].tagName.toLowerCase() == "div") {
+		this.diceHolderDiv = diceAreaDiv.getElementsByClassName("diceHolder")[0];
+	} else {
+		console.warn("DiceArea: cannot find a diceHolder div in " + areaName + ", one will be made.");
+		var holderDiv = document.createElement("div");
+		holderDiv.className = "diceHolder";
+		diceAreaDiv.appendChild(holderDiv);
+		this.diceHolderDiv = holderDiv;
+	}
 	this.totalValue = 0;
+	//Called everytimg the sum of the dice values changes,
+	//can be overwritten.
+	this.displaySum = function(sum) {};
 	return this;
 }
 
-DiceArea.prototype.displaySum = function() {
-	this.diceAreaDiv.getElementsByClassName('diceTotal')[0].innerHTML = this.totalValue;
-};
 
 DiceArea.prototype.updateSum = function() {
 	var sum = 0;
@@ -69,7 +87,7 @@ DiceArea.prototype.updateSum = function() {
 		sum += this.dice[i].value;
 	}
 	this.totalValue = sum;
-	this.displaySum();
+	this.displaySum(sum);
 };
 
 DiceArea.prototype.rollDice = function() {
@@ -78,7 +96,7 @@ DiceArea.prototype.rollDice = function() {
 		sum += this.dice[i].roll();
 	}
 	this.totalValue = sum;
-	this.displaySum();
+	this.displaySum(this.totalValue);
 };
 
 DiceArea.prototype.rollDie = function(dieId) {
