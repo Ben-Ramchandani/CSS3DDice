@@ -1,7 +1,7 @@
 CSS3dDice
 =========
 
-Pretty accurately described by the title, the 3d effect and animation is done in CSS, with a bit of javascript to make them roll. I'll post a link to an example shortly.
+Pretty accurately described by the title, the 3d effect and animation is done in CSS, with a bit of javascript to make them roll. [Link to an example.](https://ben-ramchandani.github.io/CSS3DDice/1player.html)
 
 
 Installation and use
