@@ -7,5 +7,5 @@ Pretty accurately described by the title, the 3d effect and animation is done in
 Installation and use
 --------------------
 
-Link in the files `diceStyle.css` and `dice.js`.
-`1player.html` and `2player.html` show examples of use.
+Link in the files `diceStyle.css` and `dice.js`.  
+The files `1player.html` and `2player.html` show examples of use.
